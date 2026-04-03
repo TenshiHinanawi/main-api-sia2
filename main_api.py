@@ -19,7 +19,13 @@ async def store(request: Request):
     return {"status": "success", "message": "Patient stored", "data": body}
 
 @app.post("/query")
-async def query(request: Request):
+@app.get("/query/{patient_id}")
+async def query(request: Request = None, patient_id: str = None):
+    if patient_id:
+        patient = patients.get(patient_id)
+        if not patient:
+            return {"status": "error", "message": "Patient not found"}
+        return {"status": "success", "data": patient}
     body = await request.json()
     patient_id = body.get("patient_id")
     if not patient_id:
